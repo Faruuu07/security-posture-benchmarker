@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security AI Tool</title>
+</head>
+<body>
+
+    <h2>Security Vulnerability Explainer</h2>
+
+    <input type="text" id="userInput" placeholder="Enter vulnerability (e.g. SQL Injection)">
+    <button onclick="sendData()">Explain</button>
+
+    <h3>Response:</h3>
+    <p id="output"></p>
+
+    <script>
+        async function sendData() {
+            let input = document.getElementById("userInput").value;
+
+            let response = await fetch("http://127.0.0.1:5000/describe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ input: input })
+            });
+
+            let data = await response.json();
+
+            document.getElementById("output").innerText = data.response;
+        }
+    </script>
+
+</body>
+</html>
