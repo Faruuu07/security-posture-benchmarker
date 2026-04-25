@@ -1,10 +1,11 @@
 from flask import Flask, jsonify
-from flask_cors import CORS   # 👈 ADDED
+from flask_cors import CORS
 from routes.describe import describe_bp
 
 app = Flask(__name__)
 
-CORS(app)   # 👈 ADDED (VERY IMPORTANT)
+CORS(app)
+
 
 app.register_blueprint(describe_bp)
 

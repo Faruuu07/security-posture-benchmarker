@@ -60,12 +60,33 @@
             font-size: 14px;
         }
 
-        .loading {
-            color: orange;
-        }
-
         .error {
             color: red;
+        }
+
+        /* 🔥 LOADER SPINNER */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            background: #28a745;
+        }
+
+        .copy-btn:hover {
+            background: #1e7e34;
         }
     </style>
 </head>
@@ -79,21 +100,21 @@
 
     <br>
 
-    <!-- ✅ BUTTONS -->
     <button onclick="sendData()">Explain</button>
     <button onclick="getHistory()">📜 History</button>
+    <button onclick="clearHistory()">🗑 Clear</button>
 
     <div id="responseBox"></div>
 </div>
 
 <script>
 
-// 🔹 Explain Function
+// 🔹 Explain
 async function sendData() {
     const input = document.getElementById("userInput").value;
     const responseBox = document.getElementById("responseBox");
 
-    responseBox.innerHTML = "<p class='loading'>⏳ Loading...</p>";
+    responseBox.innerHTML = "<div class='loader'></div>";
 
     try {
         const res = await fetch("http://127.0.0.1:5000/describe", {
@@ -106,7 +127,10 @@ async function sendData() {
 
         const data = await res.json();
 
-        responseBox.innerHTML = "<p>" + data.response + "</p>";
+        responseBox.innerHTML = `
+            <p id="resultText">${data.response}</p>
+            <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+        `;
 
     } catch (error) {
         responseBox.innerHTML = "<p class='error'>❌ Server not responding</p>";
@@ -114,11 +138,11 @@ async function sendData() {
 }
 
 
-// 🔹 History Function
+// 🔹 History
 async function getHistory() {
     const responseBox = document.getElementById("responseBox");
 
-    responseBox.innerHTML = "<p class='loading'>⏳ Loading History...</p>";
+    responseBox.innerHTML = "<div class='loader'></div>";
 
     try {
         const res = await fetch("http://127.0.0.1:5000/history");
@@ -144,6 +168,33 @@ async function getHistory() {
     } catch (error) {
         responseBox.innerHTML = "<p class='error'>❌ Failed to load history</p>";
     }
+}
+
+
+// 🔥 CLEAR HISTORY
+async function clearHistory() {
+    const responseBox = document.getElementById("responseBox");
+
+    responseBox.innerHTML = "<div class='loader'></div>";
+
+    try {
+        await fetch("http://127.0.0.1:5000/clear-history", {
+            method: "POST"
+        });
+
+        responseBox.innerHTML = "<p>🧹 History Cleared</p>";
+
+    } catch (error) {
+        responseBox.innerHTML = "<p class='error'>❌ Error clearing history</p>";
+    }
+}
+
+
+// 🔥 COPY FUNCTION
+function copyText() {
+    const text = document.getElementById("resultText").innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied to clipboard!");
 }
 
 </script>
