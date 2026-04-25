@@ -64,7 +64,7 @@
             color: red;
         }
 
-        /* 🔥 LOADER SPINNER */
+        /* 🔥 LOADER */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #2a5298;
@@ -88,6 +88,28 @@
         .copy-btn:hover {
             background: #1e7e34;
         }
+
+        /* 🌙 DARK MODE */
+        .dark {
+            background: #121212;
+            color: white;
+        }
+
+        .dark .container {
+            background: #1e1e1e;
+            color: white;
+        }
+
+        /* ✨ FADE ANIMATION */
+        .fade {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
     </style>
 </head>
 
@@ -103,6 +125,7 @@
     <button onclick="sendData()">Explain</button>
     <button onclick="getHistory()">📜 History</button>
     <button onclick="clearHistory()">🗑 Clear</button>
+    <button onclick="toggleMode()">🌙 Mode</button>
 
     <div id="responseBox"></div>
 </div>
@@ -113,6 +136,12 @@
 async function sendData() {
     const input = document.getElementById("userInput").value;
     const responseBox = document.getElementById("responseBox");
+
+    // ✅ Validation
+    if (!input) {
+        responseBox.innerHTML = "<p class='error'>⚠️ Please enter something</p>";
+        return;
+    }
 
     responseBox.innerHTML = "<div class='loader'></div>";
 
@@ -128,8 +157,10 @@ async function sendData() {
         const data = await res.json();
 
         responseBox.innerHTML = `
-            <p id="resultText">${data.response}</p>
-            <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+            <div class="fade">
+                <p id="resultText">${data.response}</p>
+                <button class="copy-btn" onclick="copyText()">📋 Copy</button>
+            </div>
         `;
 
     } catch (error) {
@@ -157,9 +188,11 @@ async function getHistory() {
 
         data.forEach(item => {
             output += `
-                <hr>
-                <b>Input:</b> ${item.input} <br>
-                <b>Response:</b> ${item.response} <br>
+                <div class="fade">
+                    <hr>
+                    <b>Input:</b> ${item.input} <br>
+                    <b>Response:</b> ${item.response} <br>
+                </div>
             `;
         });
 
@@ -190,12 +223,26 @@ async function clearHistory() {
 }
 
 
-// 🔥 COPY FUNCTION
+// 🔥 COPY
 function copyText() {
     const text = document.getElementById("resultText").innerText;
     navigator.clipboard.writeText(text);
-    alert("Copied to clipboard!");
+    alert("Copied!");
 }
+
+
+// 🌙 DARK MODE
+function toggleMode() {
+    document.body.classList.toggle("dark");
+}
+
+
+// ⌨️ ENTER KEY SUPPORT
+document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendData();
+    }
+});
 
 </script>
 
