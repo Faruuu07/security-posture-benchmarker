@@ -60,11 +60,8 @@
             font-size: 14px;
         }
 
-        .error {
-            color: red;
-        }
+        .error { color: red; }
 
-        /* 🔥 LOADER */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #2a5298;
@@ -89,7 +86,6 @@
             background: #1e7e34;
         }
 
-        /* 🌙 DARK MODE */
         .dark {
             background: #121212;
             color: white;
@@ -100,7 +96,6 @@
             color: white;
         }
 
-        /* ✨ FADE ANIMATION */
         .fade {
             animation: fadeIn 0.5s ease-in;
         }
@@ -109,7 +104,6 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
     </style>
 </head>
 
@@ -132,12 +126,15 @@
 
 <script>
 
+// 🔥 LIVE BACKEND URL
+const BASE_URL = "https://security-posture-benchmarker.onrender.com";
+
+
 // 🔹 Explain
 async function sendData() {
     const input = document.getElementById("userInput").value;
     const responseBox = document.getElementById("responseBox");
 
-    // ✅ Validation
     if (!input) {
         responseBox.innerHTML = "<p class='error'>⚠️ Please enter something</p>";
         return;
@@ -146,11 +143,9 @@ async function sendData() {
     responseBox.innerHTML = "<div class='loader'></div>";
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/describe", {
+        const res = await fetch(`${BASE_URL}/describe`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ input: input })
         });
 
@@ -176,7 +171,7 @@ async function getHistory() {
     responseBox.innerHTML = "<div class='loader'></div>";
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/history");
+        const res = await fetch(`${BASE_URL}/history`);
         const data = await res.json();
 
         if (data.length === 0) {
@@ -211,10 +206,7 @@ async function clearHistory() {
     responseBox.innerHTML = "<div class='loader'></div>";
 
     try {
-        await fetch("http://127.0.0.1:5000/clear-history", {
-            method: "POST"
-        });
-
+        await fetch(`${BASE_URL}/clear-history`, { method: "POST" });
         responseBox.innerHTML = "<p>🧹 History Cleared</p>";
 
     } catch (error) {
@@ -237,7 +229,7 @@ function toggleMode() {
 }
 
 
-// ⌨️ ENTER KEY SUPPORT
+// ⌨️ ENTER KEY
 document.getElementById("userInput").addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
         sendData();
